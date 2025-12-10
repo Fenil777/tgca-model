@@ -192,16 +192,38 @@ def plot_shap_waterfall(
     
     plt.figure(figsize=(10, 6))
     
-    # Create explanation object
-    if isinstance(shap_values, np.ndarray):
-        # For older SHAP versions or numpy arrays
-        shap.plots._waterfall.waterfall_legacy(
-            shap_values[sample_idx],
-            max_display=max_display
-        )
-    else:
-        # For newer SHAP versions with Explanation objects
-        shap.plots.waterfall(shap_values[sample_idx], max_display=max_display)
+    # Create explanation object - handle different SHAP versions
+    try:
+        if isinstance(shap_values, np.ndarray):
+            # For older SHAP versions or numpy arrays
+            # Note: waterfall_legacy is a private API and may change in future versions
+            try:
+                shap.plots._waterfall.waterfall_legacy(
+                    shap_values[sample_idx],
+                    max_display=max_display
+                )
+            except AttributeError:
+                # If private API changed, fall back to summary plot
+                logger.warning("waterfall_legacy not available, using summary plot")
+                shap.summary_plot(
+                    shap_values[sample_idx:sample_idx+1],
+                    X.iloc[sample_idx:sample_idx+1],
+                    max_display=max_display,
+                    show=False
+                )
+        else:
+            # For newer SHAP versions with Explanation objects (public API)
+            shap.plots.waterfall(shap_values[sample_idx], max_display=max_display)
+    except Exception as e:
+        logger.error(f"Error creating waterfall plot: {e}")
+        logger.info("Falling back to bar plot")
+        # Fallback: simple bar plot
+        values = shap_values[sample_idx] if isinstance(shap_values, np.ndarray) else shap_values.values[sample_idx]
+        features = X.columns.tolist()
+        sorted_idx = np.argsort(np.abs(values))[-max_display:]
+        plt.barh(range(len(sorted_idx)), values[sorted_idx])
+        plt.yticks(range(len(sorted_idx)), [features[i] for i in sorted_idx])
+        plt.xlabel('SHAP value')
     
     plt.tight_layout()
     

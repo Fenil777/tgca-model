@@ -54,8 +54,18 @@ def compute_brier_score(
     The Brier score measures the accuracy of probabilistic predictions.
     Lower is better (0 = perfect).
     
-    Note: This is a placeholder implementation. For a proper implementation,
-    use sksurv.metrics.brier_score or lifelines.utils.brier_score.
+    Note: This is a placeholder implementation. For production use, implement proper
+    Brier score calculation using Inverse Probability of Censoring Weighting (IPCW):
+    
+    .. code-block:: python
+    
+        from sksurv.metrics import brier_score
+        # or
+        from lifelines.utils import concordance_index
+    
+    Reference:
+        Graf et al. (1999). Assessment and comparison of prognostic 
+        classification schemes for survival data.
     
     Args:
         event_times: Actual survival times
@@ -64,18 +74,17 @@ def compute_brier_score(
         times: Time points at which to compute Brier score
         
     Returns:
-        Brier scores at each time point
+        Brier scores at each time point (placeholder - not actual scores)
+        
+    Raises:
+        NotImplementedError: Always raised to indicate this is a placeholder
     """
-    logger.info("Computing Brier score (placeholder)")
-    logger.warning(
-        "This is a placeholder. Use sksurv.metrics.brier_score or "
-        "lifelines.utils.brier_score for proper implementation."
+    logger.error("compute_brier_score is a placeholder and not implemented")
+    raise NotImplementedError(
+        "Brier score calculation is not implemented. "
+        "Use sksurv.metrics.brier_score or implement IPCW-based Brier score. "
+        "See: Graf et al. (1999) for methodology."
     )
-    
-    # Placeholder: random scores
-    brier_scores = np.random.rand(len(times)) * 0.25
-    
-    return brier_scores
 
 
 def compute_integrated_brier_score(

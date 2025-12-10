@@ -135,8 +135,25 @@ def select_genes_by_survival(
         logger.warning(f"Fewer genes ({len(gene_cols)}) than requested ({top_n})")
         return gene_cols
     
-    # Placeholder: random selection (in practice, use univariate Cox)
-    logger.warning("Using random selection as placeholder for survival-based selection")
+    # TODO: Implement proper survival-based gene selection
+    # In production, fit univariate Cox models for each gene and rank by:
+    # - p-value (smaller is better)
+    # - concordance index (higher is better)
+    # - hazard ratio significance
+    # Example implementation would use:
+    # from lifelines import CoxPHFitter
+    # for gene in gene_cols:
+    #     cph = CoxPHFitter()
+    #     cph.fit(pd.DataFrame({gene: expression_df[gene], 
+    #                           'OS_time': expression_df[time_col],
+    #                           'OS_status': expression_df[event_col]}),
+    #            duration_col=time_col, event_col=event_col)
+    #     p_values[gene] = cph.summary['p'].values[0]
+    # selected_genes = sorted(p_values, key=p_values.get)[:top_n]
+    
+    # Placeholder: random selection (replace with above logic for production)
+    logger.warning("Using random selection as placeholder for survival-based selection. "
+                   "Replace with univariate Cox regression for production.")
     selected_genes = np.random.choice(gene_cols, size=top_n, replace=False).tolist()
     
     logger.info(f"Selected {len(selected_genes)} genes")

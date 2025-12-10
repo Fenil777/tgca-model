@@ -84,10 +84,15 @@ def predict_survival(model, patient_data, model_type):
             surv_probs = surv_funcs[0].y
             
         elif model_type == "deepsurv":
-            # Placeholder - would need trainer object
+            # TODO: DeepSurv requires both model and trainer objects
+            # This is a placeholder - in production, load the trainer:
+            # from src.models.deepsurv_model import predict_risk_deepsurv
+            # risk_score = predict_risk_deepsurv(trainer, patient_data)[0]
+            # Then use model to predict survival function at specific times
+            logger.warning("DeepSurv prediction using placeholder (trainer not available)")
             risk_score = np.random.randn()
             times = np.linspace(0, 2000, 100)
-            surv_probs = np.exp(-risk_score * times / 1000)
+            surv_probs = np.exp(-np.abs(risk_score) * times / 1000)
             
         else:
             risk_score = 0
