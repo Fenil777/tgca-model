@@ -94,7 +94,14 @@ def compute_integrated_brier_score(
     times: np.ndarray,
 ) -> float:
     """
-    Compute integrated Brier score (placeholder).
+    Compute integrated Brier score.
+    
+    **Note: This function is not implemented.** It raises NotImplementedError
+    because it depends on compute_brier_score which is not implemented.
+    
+    For production implementation, use:
+    - sksurv.metrics.integrated_brier_score (requires scikit-survival)
+    - Or compute Brier scores at multiple time points and integrate
     
     Args:
         event_times: Actual survival times
@@ -104,18 +111,15 @@ def compute_integrated_brier_score(
         
     Returns:
         Integrated Brier score
+        
+    Raises:
+        NotImplementedError: Always raised because compute_brier_score is not implemented
     """
-    logger.info("Computing integrated Brier score (placeholder)")
-    
-    brier_scores = compute_brier_score(
-        event_times, survival_probs, event_observed, times
+    logger.error("compute_integrated_brier_score is not implemented")
+    raise NotImplementedError(
+        "Integrated Brier score calculation is not implemented. "
+        "Use sksurv.metrics.integrated_brier_score or implement based on IPCW Brier scores."
     )
-    
-    # Integrate using trapezoidal rule
-    ibs = np.trapz(brier_scores, times) / (times[-1] - times[0])
-    
-    logger.info(f"Integrated Brier score: {ibs:.4f}")
-    return ibs
 
 
 def evaluate_model(

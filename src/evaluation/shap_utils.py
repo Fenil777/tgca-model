@@ -1,4 +1,17 @@
-"""SHAP utilities for model interpretability."""
+"""
+SHAP utilities for model interpretability.
+
+**SHAP Version Compatibility:**
+This module uses SHAP's public API where possible. However, the waterfall plot
+functionality (plot_shap_waterfall) may use private API (_waterfall.waterfall_legacy)
+for older SHAP versions. If you encounter issues:
+
+1. Update SHAP to latest: `pip install -U shap`
+2. Or pin to a tested version: `shap>=0.41.0,<0.43.0`
+3. The module includes fallback to summary plots if waterfall fails
+
+Tested with SHAP 0.41.0 and 0.42.x.
+"""
 
 from typing import Optional, Any
 

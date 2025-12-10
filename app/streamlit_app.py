@@ -84,12 +84,18 @@ def predict_survival(model, patient_data, model_type):
             surv_probs = surv_funcs[0].y
             
         elif model_type == "deepsurv":
-            # TODO: DeepSurv requires both model and trainer objects
-            # This is a placeholder - in production, load the trainer:
-            # from src.models.deepsurv_model import predict_risk_deepsurv
-            # risk_score = predict_risk_deepsurv(trainer, patient_data)[0]
-            # Then use model to predict survival function at specific times
-            logger.warning("DeepSurv prediction using placeholder (trainer not available)")
+            # DeepSurv requires both model and trainer objects for prediction
+            # Currently using placeholder because trainer is not serialized/loaded
+            # 
+            # To implement properly:
+            # 1. Save trainer in training script: save_pickle(trainer, 'models/deepsurv_trainer.pkl')
+            # 2. Load here: trainer = load_pickle('models/deepsurv_trainer.pkl')
+            # 3. Predict: risk_score = predict_risk_deepsurv(trainer, patient_data)[0]
+            #
+            # For survival function, need to implement predict_survival_function in deepsurv_model.py
+            # Or use baseline hazard from training data
+            st.warning("⚠️ DeepSurv prediction using demo placeholder (trained model not loaded)")
+            logger.info("DeepSurv prediction using placeholder - load trained model for production")
             risk_score = np.random.randn()
             times = np.linspace(0, 2000, 100)
             surv_probs = np.exp(-np.abs(risk_score) * times / 1000)

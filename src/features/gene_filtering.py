@@ -108,12 +108,35 @@ def select_genes_by_survival(
     method: str = "univariate",
 ) -> List[str]:
     """
-    Select genes associated with survival (placeholder for univariate Cox).
+    Select genes associated with survival using univariate analysis.
     
-    This is a placeholder. In practice, you would:
-    - Fit univariate Cox models for each gene
-    - Rank by p-value or concordance index
-    - Select top N associated genes
+    **Note: This function is not fully implemented.** It currently raises
+    NotImplementedError to indicate that proper survival-based gene selection
+    logic needs to be added before use in production.
+    
+    For production implementation:
+    1. Fit univariate Cox models for each gene
+    2. Rank by p-value or concordance index
+    3. Select top N associated genes
+    
+    Example implementation:
+    
+    .. code-block:: python
+    
+        from lifelines import CoxPHFitter
+        p_values = {}
+        for gene in gene_cols:
+            cph = CoxPHFitter()
+            data = pd.DataFrame({
+                gene: expression_df[gene],
+                'OS_time': expression_df[time_col],
+                'OS_status': expression_df[event_col]
+            })
+            cph.fit(data, duration_col=time_col, event_col=event_col)
+            p_values[gene] = cph.summary['p'].values[0]
+        
+        # Select genes with smallest p-values
+        selected_genes = sorted(p_values, key=p_values.get)[:top_n]
     
     Args:
         expression_df: DataFrame with expression and survival data
@@ -124,40 +147,17 @@ def select_genes_by_survival(
         
     Returns:
         List of selected gene names
+        
+    Raises:
+        NotImplementedError: Always raised to indicate function needs implementation
     """
-    logger.info(f"Selecting genes by survival association (method: {method})")
-    
-    # Get gene columns
-    gene_cols = [c for c in expression_df.columns 
-                if c not in ['patient_id', time_col, event_col]]
-    
-    if len(gene_cols) <= top_n:
-        logger.warning(f"Fewer genes ({len(gene_cols)}) than requested ({top_n})")
-        return gene_cols
-    
-    # TODO: Implement proper survival-based gene selection
-    # In production, fit univariate Cox models for each gene and rank by:
-    # - p-value (smaller is better)
-    # - concordance index (higher is better)
-    # - hazard ratio significance
-    # Example implementation would use:
-    # from lifelines import CoxPHFitter
-    # for gene in gene_cols:
-    #     cph = CoxPHFitter()
-    #     cph.fit(pd.DataFrame({gene: expression_df[gene], 
-    #                           'OS_time': expression_df[time_col],
-    #                           'OS_status': expression_df[event_col]}),
-    #            duration_col=time_col, event_col=event_col)
-    #     p_values[gene] = cph.summary['p'].values[0]
-    # selected_genes = sorted(p_values, key=p_values.get)[:top_n]
-    
-    # Placeholder: random selection (replace with above logic for production)
-    logger.warning("Using random selection as placeholder for survival-based selection. "
-                   "Replace with univariate Cox regression for production.")
-    selected_genes = np.random.choice(gene_cols, size=top_n, replace=False).tolist()
-    
-    logger.info(f"Selected {len(selected_genes)} genes")
-    return selected_genes
+    logger.error("select_genes_by_survival is not implemented")
+    raise NotImplementedError(
+        "Survival-based gene selection is not implemented. "
+        "Use select_variable_genes() for variance-based selection, "
+        "or implement univariate Cox regression for each gene. "
+        "See function docstring for example implementation."
+    )
 
 
 def apply_gene_filter(
